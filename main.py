@@ -27,6 +27,10 @@ def check_gate(line):
     problems = []
     if not line or not line.strip():
         problems.append("empty")
+    if line != line.strip():
+        # The judged text is the line itself: stray spaces would count
+        # against the limit and look sloppy on the leaderboard.
+        problems.append("leading/trailing whitespace")
     if len(line) > LIMIT:
         problems.append("too long: %d chars" % len(line))
     if "\n" in line.strip():
@@ -41,7 +45,8 @@ def run():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(line, encoding="utf-8")
     saved = OUT.read_text(encoding="utf-8")
-    print("Wrote %s (%d chars)" % (OUT, len(saved)))
+    print("Wrote %s (%d chars, %d chars of headroom)"
+          % (OUT, len(saved), LIMIT - len(saved)))
     print(saved)
 
 
